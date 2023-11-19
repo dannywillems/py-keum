@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "keum"
+version = "0.1.0"
+description = "Modular elliptic curve library implementation in Python for experimentations"
+authors = ["Danny Willems <danny@badass.be>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+sympy = "*"
+
+[tool.poetry.dev-dependencies]
+black = "*"
+pytest = "*"
+mypy = "*"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[flake8]
+max-line-length = 120
