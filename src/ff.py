@@ -11,15 +11,18 @@ class FiniteField(ABC):
     def __init__(self, v):
         if not self.ORDER_CHECK_PERFORMED:
             assert self.ORDER is not None
-            assert sympy.isprime(self.ORDER), "%d is not prime" % self.v
             self.ORDER_CHECK_PERFORMED = True
-        self.v = v
+        self.v = v % self.ORDER
 
     def __repr__(self):
         return "F_%d(%d)" % (self.ORDER, self.v)
 
     def __str__(self):
         return "F_%d(%d)" % (self.ORDER, self.v)
+
+    def __eq__(self, other):
+        # Hypothesis: both are smaller than the order.
+        return self.v == other.v
 
     def __add__(self, other):
         return self.__class__((self.v + other.v) % self.ORDER)
@@ -41,9 +44,39 @@ class FiniteField(ABC):
         return cls(v)
 
 
-class F13(FiniteField):
+class PrimeFiniteField(FiniteField):
+    PRIME_DECOMPOSITION = None
+
+    @classmethod
+    def prime_decomposition_multiplicative_subgroup(cls):
+        if cls.PRIME_DECOMPOSITION is None:
+            cls.__check_order()
+            res = sympy.ntheory.factorint(cls.ORDER - 1)
+            cls.PRIME_DECOMPOSITION = res
+        return cls.PRIME_DECOMPOSITION
+
+    @classmethod
+    def highest_power_of_two(cls):
+        prime_decomposition = cls.prime_decomposition_multiplicative_subgroup()
+        return prime_decomposition[2] if 2 in prime_decomposition else 0
+
+    @classmethod
+    def __check_order(cls):
+        if not cls.ORDER_CHECK_PERFORMED:
+            assert cls.ORDER is not None
+            assert sympy.isprime(cls.ORDER), "%d is not prime" % cls.ORDER
+            cls.ORDER_CHECK_PERFORMED = True
+
+    def __init__(self, v):
+        self.__check_order()
+        self.v = v
+
+
+class F13(PrimeFiniteField):
     ORDER = 13
 
 
 if __name__ == "__main__":
     print(F13.random() + F13.random())
+    print(F13.prime_decomposition_multiplicative_subgroup())
+    print(F13.highest_power_of_two())
