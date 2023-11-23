@@ -48,7 +48,7 @@ class FiniteField(ABC):
         return self.__class__((self.v - other.v) % self.ORDER)
 
     def __div__(self, other):
-        if other.v == 0:
+        if other.is_zero():
             raise ValueError("Division by zero")
         return self.__class__((self.v / other.v) % self.ORDER)
 
