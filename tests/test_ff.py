@@ -90,3 +90,24 @@ def test_one_is_identity_for_multiplication(Finite_field_instance):
 def test_zero_is_identity_for_addition(Finite_field_instance):
     r = Finite_field_instance.random()
     assert r + Finite_field_instance.zero() == r
+
+
+def test_inverse_of_one_is_one(Finite_field_instance):
+    one = Finite_field_instance.one()
+    assert one.inverse() == one
+
+
+def test_zero_has_no_inverse(Finite_field_instance):
+    with pytest.raises(ValueError):
+        Finite_field_instance.zero().inverse()
+
+
+def test_inverse(Finite_field_instance):
+    a = Finite_field_instance.random()
+    assert a.inverse() * a == Finite_field_instance.one()
+
+
+def test_inverse_in_f13():
+    two = F13(2)
+    two_inverse = F13(7)
+    assert two.inverse() == two_inverse

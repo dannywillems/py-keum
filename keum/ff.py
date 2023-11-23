@@ -69,16 +69,18 @@ class FiniteField(ABC):
     def pow(self, n):
         def aux(x, acc, n):
             if n == 1:
-                return acc
-            elif n // 2 == 0:
+                return acc * x
+            elif n % 2 == 0:
                 return aux(x, acc * acc, n // 2)
             else:
-                return aux(x, acc * x, n // 2)
+                return aux(x, acc * x, n - 1)
 
         if n == 0:
             return self.__class__.one()
+        elif n == 1:
+            return self.__class__(self.v)
         else:
-            return aux(self, self.__class__.one(), n)
+            return aux(self, self, n)
 
     # To test
     def inverse(self):
