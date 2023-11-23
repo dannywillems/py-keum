@@ -14,6 +14,14 @@ class FiniteField(ABC):
             self.ORDER_CHECK_PERFORMED = True
         self.v = v % self.ORDER
 
+    @classmethod
+    def zero(cls):
+        return cls(0)
+
+    @classmethod
+    def one(cls):
+        return cls(1)
+
     def __repr__(self):
         return "F_%d(%d)" % (self.ORDER, self.v)
 
