@@ -108,10 +108,12 @@ class AffineWeierstrass(Weierstrass, ABCMeta):
         x3 = square_slope + self.x.negate() + other.x.negate()
         double_x1 = self.x + self.x
         double_x1_plus_x2 = double_x1 + other.x
-        y3 = double_x1_plus_x2 * slope + (square_slope * slope).negate() + \
-            self.y.negate()
+        y3 = (
+            double_x1_plus_x2 * slope
+            + (square_slope * slope).negate()
+            + self.y.negate()
+        )
         return self.__class__(x3, y3)
-
 
     def to_bytes(self):
         pass

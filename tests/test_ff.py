@@ -61,14 +61,14 @@ def test_addition_associativity(Finite_field_instance):
     a = Finite_field_instance.random()
     b = Finite_field_instance.random()
     c = Finite_field_instance.random()
-    assert (a + (b + c) == (a + b) + c)
+    assert a + (b + c) == (a + b) + c
 
 
 def test_distributivity(Finite_field_instance):
     a = Finite_field_instance.random()
     b = Finite_field_instance.random()
     c = Finite_field_instance.random()
-    assert (a * (b + c) == a * b + a * c)
+    assert a * (b + c) == a * b + a * c
 
 
 def test_multiplication_commutative(Finite_field_instance):
@@ -84,9 +84,9 @@ def test_multiplication_commutative(Finite_field_instance):
 
 def test_one_is_identity_for_multiplication(Finite_field_instance):
     r = Finite_field_instance.random()
-    assert (r * Finite_field_instance.one() == r)
+    assert r * Finite_field_instance.one() == r
 
 
 def test_zero_is_identity_for_addition(Finite_field_instance):
     r = Finite_field_instance.random()
-    assert (r + Finite_field_instance.zero() == r)
+    assert r + Finite_field_instance.zero() == r

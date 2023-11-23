@@ -48,13 +48,14 @@ class FiniteField(ABC):
     def __mul__(self, other):
         if isinstance(other, self.__class__):
             return self.__class__((self.v * other.v) % self.ORDER)
-        raise ValueError("Multiplication only possible between element of the same field")
+        raise ValueError(
+            "Multiplication only possible between element of the same field"
+        )
 
     def __sub__(self, other):
         if isinstance(other, self.__class__):
             return self.__class__((self.v - other.v) % self.ORDER)
         raise ValueError("Substraction only possible between element of the same field")
-
 
     # Verify it corresponds to `/`
     def __truediv__(self, other):
@@ -67,18 +68,23 @@ class FiniteField(ABC):
     # To test
     def pow(self, n):
         def aux(x, acc, n):
-            if n // 2 == 0:
+            if n == 1:
+                return acc
+            elif n // 2 == 0:
                 return aux(x, acc * acc, n // 2)
             else:
                 return aux(x, acc * x, n // 2)
 
-        return aux(self.v, self.__class__.one())
+        if n == 0:
+            return self.__class__.one()
+        else:
+            return aux(self, self.__class__.one(), n)
 
     # To test
     def inverse(self):
         if self.is_zero():
             raise ValueError("Zero has no inverse")
-        return self.v.pow(self.ORDER - 1)
+        return self.pow(self.ORDER - 1)
 
     # Add a seed
     @classmethod
