@@ -1,2 +1,2 @@
-from ff import *
-from ec import *
+from .ff import *
+from .ec import *

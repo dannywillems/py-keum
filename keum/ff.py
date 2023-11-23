@@ -57,7 +57,7 @@ class FiniteField(ABC):
 
 
     # Verify it corresponds to `/`
-    def __div__(self, other):
+    def __truediv__(self, other):
         if isinstance(other, self.__class__):
             if other.is_zero():
                 raise ValueError("Division by zero")
