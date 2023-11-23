@@ -111,3 +111,13 @@ def test_inverse_in_f13():
     two = F13(2)
     two_inverse = F13(7)
     assert two.inverse() == two_inverse
+
+
+def test_is_zero(Finite_field_instance):
+    two = Finite_field_instance(2)
+    assert not two.is_zero()
+
+
+def test_is_one(Finite_field_instance):
+    two = Finite_field_instance(2)
+    assert not two.is_one()
