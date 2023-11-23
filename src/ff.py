@@ -22,6 +22,12 @@ class FiniteField(ABC):
     def one(cls):
         return cls(1)
 
+    def is_zero(self):
+        return self.v == 0
+
+    def is_one(self):
+        return self.v == 1
+
     def __repr__(self):
         return "F_%d(%d)" % (self.ORDER, self.v)
 
