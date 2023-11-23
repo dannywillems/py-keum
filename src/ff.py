@@ -36,22 +36,51 @@ class FiniteField(ABC):
 
     def __eq__(self, other):
         # Hypothesis: both are smaller than the order.
-        return self.v == other.v
+        if isinstance(other, self.__class__):
+            return self.v == other.v
+        raise ValueError("Equality only possible between element of the same field")
 
     def __add__(self, other):
-        return self.__class__((self.v + other.v) % self.ORDER)
+        if isinstance(other, self.__class__):
+            return self.__class__((self.v + other.v) % self.ORDER)
+        raise ValueError("Addition only possible between element of the same field")
 
     def __mul__(self, other):
-        return self.__class__((self.v * other.v) % self.ORDER)
+        if isinstance(other, self.__class__):
+            return self.__class__((self.v * other.v) % self.ORDER)
+        raise ValueError("Multiplication only possible between element of the same field")
 
     def __sub__(self, other):
-        return self.__class__((self.v - other.v) % self.ORDER)
+        if isinstance(other, self.__class__):
+            return self.__class__((self.v - other.v) % self.ORDER)
+        raise ValueError("Substraction only possible between element of the same field")
 
+
+    # Verify it corresponds to `/`
     def __div__(self, other):
-        if other.is_zero():
-            raise ValueError("Division by zero")
-        return self.__class__((self.v / other.v) % self.ORDER)
+        if isinstance(other, self.__class__):
+            if other.is_zero():
+                raise ValueError("Division by zero")
+            return self.__class__((self.v / other.v) % self.ORDER)
+        raise ValueError("Division only possible between element of the same field")
 
+    # To test
+    def pow(self, n):
+        def aux(x, acc, n):
+            if n // 2 == 0:
+                return aux(x, acc * acc, n // 2)
+            else:
+                return aux(x, acc * x, n // 2)
+
+        return aux(self.v, self.__class__.one())
+
+    # To test
+    def inverse(self):
+        if self.is_zero():
+            raise ValueError("Zero has no inverse")
+        return self.v.pow(self.ORDER - 1)
+
+    # Add a seed
     @classmethod
     def random(cls):
         v = random.randint(0, cls.ORDER - 1)
@@ -60,6 +89,12 @@ class FiniteField(ABC):
 
 class PrimeFiniteField(FiniteField):
     PRIME_DECOMPOSITION = None
+
+    def __div__(self, other):
+        if isinstance(other, self.__class__):
+            if other.is_zero():
+                raise ValueError("Division by zero")
+            return self.__class__((self.v / other.v) % self.ORDER)
 
     @classmethod
     def prime_decomposition_multiplicative_subgroup(cls):
