@@ -126,6 +126,8 @@ class F13(PrimeFiniteField):
 
 
 if __name__ == "__main__":
-    print(F13.random() + F13.random())
-    print(F13.prime_decomposition_multiplicative_subgroup())
-    print(F13.highest_power_of_two())
+    print(F13.one())
+    print(F13.zero() / F13.zero())
+    # print(F13.random() + F13.random())
+    # print(F13.prime_decomposition_multiplicative_subgroup())
+    # print(F13.highest_power_of_two())

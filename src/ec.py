@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from ff import FiniteField
+from keum import FiniteField
 import typing
 
 
