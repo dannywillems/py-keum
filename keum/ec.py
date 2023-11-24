@@ -29,6 +29,11 @@ class EllipticCurve(metaclass=ABCMeta):
     #     pass
 
     @classmethod
+    @abstractmethod
+    def is_in_prime_subgroup(cls, x, y):
+        pass
+
+    @classmethod
     def zero(cls):
         pass
 
@@ -125,7 +130,7 @@ class AffineWeierstrass(Weierstrass, metaclass=ABCMeta):
         cls.__check_parameters()
         assert isinstance(x, cls.Fq)
         assert isinstance(y, cls.Fq)
-        if cls.is_on_curve(x, y):
+        if cls.is_on_curve(x, y) and cls.is_in_prime_subgroup(x=x, y=y):
             return cls(x, y)
         else:
             raise ValueError("This is not a valid point on the curve")
@@ -136,7 +141,7 @@ class AffineWeierstrass(Weierstrass, metaclass=ABCMeta):
         assert isinstance(x, cls.Fq)
         assert isinstance(y, cls.Fq)
         # Check it is on curve
-        if cls.is_on_curve(x, y):
+        if cls.is_on_curve(x=x, y=y) and cls.is_in_prime_subgroup(x=x, y=y):
             return cls(x=x, y=y)
         else:
             return None
@@ -237,3 +242,11 @@ class AffineWeierstrass(Weierstrass, metaclass=ABCMeta):
 
     def to_compressed_bytes(self):
         pass
+
+    @classmethod
+    def is_in_prime_subgroup(cls, x, y):
+        p = cls(x, y)
+        if p.is_zero():
+            return True
+        p_cof = p.mul(cls.Fr(cls.COFACTOR))
+        return not p_cof.is_zero()
