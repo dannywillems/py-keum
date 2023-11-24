@@ -57,7 +57,6 @@ class FiniteField(ABC):
             return self.__class__((self.v - other.v) % self.ORDER)
         raise ValueError("Substraction only possible between element of the same field")
 
-    # Verify it corresponds to `/`
     def __truediv__(self, other):
         if isinstance(other, self.__class__):
             if other.is_zero():
@@ -68,7 +67,6 @@ class FiniteField(ABC):
     def copy(self):
         return self.__class__(self.v)
 
-    # To test
     def pow(self, n):
         if n == 0:
             return self.__class__.one()
@@ -79,10 +77,7 @@ class FiniteField(ABC):
             if b == "1":
                 acc = acc * self
         return acc
-        # else:
-        #     return aux(self, self.__class__.one(), n)
 
-    # To test
     def inverse(self):
         if self.is_zero():
             raise ValueError("Zero has no inverse")
