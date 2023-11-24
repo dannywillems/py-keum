@@ -3,8 +3,11 @@
 **This is a work in progress**
 
 Keum is a modular implementation of cryptographic components which can be used
-as a toolbox to bootstrap projects and experimentations. It is not supposed to
-be used in production!
+as a toolbox to bootstrap projects and experimentations. The library aims to be
+the building block of higher level cryptographic protocols like Plonk, Groth16,
+folding schemes, recursion layer, etc.
+
+It is not supposed to be used in production!
 It is inefficient and not audited (and will never be).
 
 For instance, keum includes (or will include):
@@ -12,6 +15,8 @@ For instance, keum includes (or will include):
 - Elliptic curve operations in different forms (Edwards, Montgomery,
   Weierstrass) and different coordinates (affine, jacobian, projective)
 - Arithmetisation oriented hash functions (Poseidon, Griffin, Anemoi, Rescue)
+- Polynomial operations
+- Polynomial commitments
 
 The generic primitives are instantiated with standard parameters. For instance, the following elliptic curves are currently supported:
 - [pallas](./keum/pallas.py)
