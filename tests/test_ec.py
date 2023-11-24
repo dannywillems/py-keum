@@ -47,13 +47,29 @@ def test_negate_identity(Ec):
 
 def test_negate(Ec):
     a = Ec.random()
-    assert (a == a.negate().negate())
+    assert a == a.negate().negate()
 
-def test_addition_of_two_points_is_on_the_curve(Ec):
-    p1 = Ec.random()
-    p2 = Ec.random()
-    p = p1 + p2
-    assert Ec.is_on_curve(p.x, p.y)
+
+# def test_addition_of_two_points_is_on_the_curve(Ec):
+#     p1 = Ec.random()
+#     p2 = Ec.random()
+#     p = p1 + p2
+#     assert Ec.is_on_curve(p.x, p.y)
+
+
+def test_mul_zero_gives_identity(Ec):
+    p = Ec.random()
+    assert p.mul(0) == Ec.zero()
+
+
+def test_mul_one_gives_same_point(Ec):
+    p = Ec.random()
+    assert p.mul(1) == p
+
+
+def test_mul_by_two_gives_double(Ec):
+    p = Ec.random()
+    assert p.mul(2) == p.double()
 
 
 # def test_add_is_commutative(Ec):

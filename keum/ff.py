@@ -106,6 +106,9 @@ class PrimeFiniteField(FiniteField):
     def one(cls):
         return cls(1)
 
+    def double(self):
+        return self + self
+
     def is_zero(self):
         return self.v == 0
 

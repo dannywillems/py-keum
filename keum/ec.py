@@ -141,6 +141,38 @@ class AffineWeierstrass(Weierstrass, metaclass=ABCMeta):
         else:
             return None
 
+    def copy(self):
+        return self.__class__(self.x.copy(), self.y.copy())
+
+    def double(self):
+        if self.is_zero():
+            return self.zero()
+        xx = self.x.square()
+        xx_3_plus_a = xx.double() + xx + self.A
+        double_x = self.x.double()
+        double_y = self.y.double()
+        square_double_y = double_y.square()
+        x3 = xx_3_plus_a.square() / square_double_y - double_x
+        triple_x = self.x + double_x
+        tmp1 = triple_x * xx_3_plus_a / double_y
+        tmp2 = xx_3_plus_a.square() * xx_3_plus_a
+        tmp3 = square_double_y * double_y
+        y3 = tmp1 - (tmp2 / tmp3) - self.y
+        return self.__class__(x3, y3)
+
+    def mul(self, n):
+        def aux(x, n):
+            if n == 0:
+                return self.__class__.zero()
+            elif n == 1:
+                return x.copy()
+            elif n % 2 == 0:
+                return aux(x.double(), n / 2)
+            else:
+                return x + aux(x, n - 1)
+
+        return aux(self, n)
+
     def __eq__(self, other):
         if self.is_zero() and other.is_zero():
             return True
