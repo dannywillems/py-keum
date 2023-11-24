@@ -50,6 +50,11 @@ def test_negate(Ec):
     assert a == a.negate().negate()
 
 
+def test_addition_support_same_points(Ec):
+    p = Ec.random()
+    assert p + p == p.double()
+
+
 # def test_addition_of_two_points_is_on_the_curve(Ec):
 #     p1 = Ec.random()
 #     p2 = Ec.random()

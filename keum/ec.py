@@ -191,6 +191,8 @@ class AffineWeierstrass(Weierstrass, metaclass=ABCMeta):
             return self.__class__(self.x, self.y)
         elif self.x == other.x and self.y == other.y.negate():
             return self.__class__.zero()
+        elif self.x == other.x and self.y == other.y:
+            return self.double()
         y2_min_y1 = other.y - self.y
         x2_min_x1 = other.x - self.x
         slope = y2_min_y1 / x2_min_x1
