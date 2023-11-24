@@ -64,6 +64,9 @@ class FiniteField(ABC):
             return self.__class__((self.v / other.v) % self.ORDER)
         raise ValueError("Division only possible between element of the same field")
 
+    def square(self):
+        return self * self
+
     def copy(self):
         return self.__class__(self.v)
 
