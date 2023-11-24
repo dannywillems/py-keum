@@ -1,18 +1,11 @@
 from abc import ABCMeta, abstractmethod
-from keum import FiniteField, PrimeFiniteField
 import random
-import typing
 
 
 class EllipticCurve(metaclass=ABCMeta):
     Fr = None
     Fq = None
     COFACTOR = None
-
-    @classmethod
-    @abstractmethod
-    def zero(cls):
-        pass
 
     # @classmethod
     # @abstractmethod
@@ -35,10 +28,12 @@ class EllipticCurve(metaclass=ABCMeta):
         pass
 
     @classmethod
+    @abstractmethod
     def zero(cls):
         pass
 
     @classmethod
+    @abstractmethod
     def one(cls):
         pass
 
@@ -238,10 +233,10 @@ class AffineWeierstrass(Weierstrass, metaclass=ABCMeta):
         return cls(x, y).mul(cls.Fr(cls.COFACTOR))
 
     def to_bytes(self):
-        pass
+        raise Exception("Not implemented")
 
     def to_compressed_bytes(self):
-        pass
+        raise Exception("Not implemented")
 
     @classmethod
     def is_in_prime_subgroup(cls, x, y):
