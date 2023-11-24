@@ -60,6 +60,18 @@ def test_affine_random_is_on_the_curve(AffineEc):
     assert AffineEc.is_on_curve(a.x, a.y)
 
 
+# def test_affine_encoding_decoding(AffineEc):
+#     a = AffineEc.random()
+#     assert AffineEc.of_be_bytes_exn(a.to_be_bytes()) == a
+#     assert AffineEc.of_be_bytes_opt(a.to_be_bytes()) == a
+
+
+def test_projective_encoding_decoding(ProjectiveEc):
+    a = ProjectiveEc.random()
+    assert ProjectiveEc.of_be_bytes_exn(a.to_be_bytes()) == a
+    assert ProjectiveEc.of_be_bytes_opt(a.to_be_bytes()) == a
+
+
 def test_affine_generator_is_on_curve(AffineEc):
     g = AffineEc.generator()
     assert AffineEc.is_on_curve(g.x, g.y)

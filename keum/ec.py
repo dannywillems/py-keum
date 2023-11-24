@@ -15,16 +15,6 @@ class EllipticCurve(metaclass=ABCMeta):
     # def check_bytes(cls):
     #     pass
 
-    # @classmethod
-    # @abstractmethod
-    # def of_bytes_opt(cls):
-    #     pass
-
-    # @classmethod
-    # @abstractmethod
-    # def of_bytes_exn(cls):
-    #     pass
-
     @classmethod
     @abstractmethod
     def is_in_prime_subgroup(cls, x: Fq, y: Fq) -> bool:
@@ -54,10 +44,6 @@ class EllipticCurve(metaclass=ABCMeta):
 
     @abstractmethod
     def negate(self) -> Self:
-        pass
-
-    @abstractmethod
-    def to_bytes(self):
         pass
 
     @classmethod
@@ -238,9 +224,6 @@ class AffineWeierstrass(Weierstrass, metaclass=ABCMeta):
             y = y2.sqrt_opt(sign=sign)
         return cls(x, y).mul(cls.Fr(cls.COFACTOR))
 
-    def to_bytes(self):
-        raise Exception("Not implemented")
-
     def to_compressed_bytes(self):
         raise Exception("Not implemented")
 
@@ -345,8 +328,37 @@ class ProjectiveWeierstrass(Weierstrass, metaclass=ABCMeta):
 
         return aux(self, n.to_int())
 
-    def to_bytes(self):
-        raise Exception("Not implemented")
+    def to_be_bytes(self):
+        x_be = self.x.to_be_bytes()
+        y_be = self.y.to_be_bytes()
+        z_be = self.z.to_be_bytes()
+        return "%s%s%s" % (x_be, y_be, z_be)
+
+    @classmethod
+    def of_be_bytes_opt(cls, bs: str) -> Self:
+        if len(bs) != 3 * cls.Fq.bytes_length() * 2:
+            return None
+        x_bs = bs[0:64]
+        y_bs = bs[64:128]
+        z_bs = bs[128:192]
+        x = cls.Fq.of_be_bytes_opt(x_bs)
+        y = cls.Fq.of_be_bytes_opt(y_bs)
+        z = cls.Fq.of_be_bytes_opt(z_bs)
+        if x is None or y is None or z is None:
+            return None
+        return cls.from_coordinates_opt(x=x, y=y, z=z)
+
+    @classmethod
+    def of_be_bytes_exn(cls, bs: str) -> Self:
+        if len(bs) != 3 * cls.Fq.bytes_length() * 2:
+            return None
+        x_bs = bs[0:64]
+        y_bs = bs[64:128]
+        z_bs = bs[128:192]
+        x = cls.Fq.of_be_bytes_exn(x_bs)
+        y = cls.Fq.of_be_bytes_exn(y_bs)
+        z = cls.Fq.of_be_bytes_exn(z_bs)
+        return cls.from_coordinates_exn(x=x, y=y, z=z)
 
     def to_compressed_bytes(self):
         raise Exception("Not implemented")
@@ -426,7 +438,7 @@ class ProjectiveWeierstrass(Weierstrass, metaclass=ABCMeta):
     @classmethod
     def from_coordinates_opt(cls, x: Fq, y: Fq, z: Fq) -> Optional[Self]:
         if cls.is_on_curve(x=x, y=y, z=z) and cls.is_in_prime_subgroup(x=x, y=y, z=z):
-            return cls(x=x, y=y, z=y)
+            return cls(x=x, y=y, z=z)
         else:
             return None
 
