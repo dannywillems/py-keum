@@ -1,5 +1,5 @@
 from keum import PrimeFiniteField
-from keum import AffineWeierstrass
+from keum import AffineWeierstrass, ProjectiveWeierstrass
 
 
 class Fq(PrimeFiniteField):
@@ -15,6 +15,16 @@ class Fr(PrimeFiniteField):
 
 
 class AffineWeierstrass(AffineWeierstrass):
+    Fq = Fq
+    Fr = Fr
+    A = Fq(0)
+    B = Fq(5)
+    COFACTOR = 1
+    GENERATOR_X = Fq(1).negate()
+    GENERATOR_Y = Fq(2)
+
+
+class ProjectiveWeierstrass(ProjectiveWeierstrass):
     Fq = Fq
     Fr = Fr
     A = Fq(0)

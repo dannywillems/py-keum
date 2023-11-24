@@ -2,7 +2,7 @@ from abc import ABCMeta, abstractmethod
 import random
 
 # From 3.11
-from typing import Self
+from typing import Self, Optional
 
 
 class EllipticCurve(metaclass=ABCMeta):
@@ -37,8 +37,12 @@ class EllipticCurve(metaclass=ABCMeta):
 
     @classmethod
     @abstractmethod
-    def one(cls) -> Self:
+    def generator(cls) -> Self:
         pass
+
+    @classmethod
+    def one(cls) -> Self:
+        return cls.generator()
 
     @abstractmethod
     def is_zero(self) -> bool:
@@ -101,10 +105,6 @@ class AffineWeierstrass(Weierstrass, metaclass=ABCMeta):
     @classmethod
     def zero(cls) -> Self:
         return cls(x=None, y=None)
-
-    @classmethod
-    def one(cls) -> Self:
-        return cls.generator()
 
     @classmethod
     def is_on_curve(cls, x: Fq, y: Fq) -> bool:
@@ -251,3 +251,197 @@ class AffineWeierstrass(Weierstrass, metaclass=ABCMeta):
             return True
         p_cof = p.mul(cls.Fr(cls.COFACTOR))
         return not p_cof.is_zero()
+
+
+class ProjectiveWeierstrass(Weierstrass, metaclass=ABCMeta):
+    CHECKED_PARAMETERS = False
+    GENERATOR_X = None
+    GENERATOR_Y = None
+    GENERATOR_Z = None
+    # Redefining for typing
+    Fq = None
+    Fr = None
+
+    def __init__(self, x, y, z):
+        self.x = x
+        self.y = y
+        self.z = z
+
+    @classmethod
+    def zero(cls):
+        return cls(x=cls.Fq.zero(), y=cls.Fq.one(), z=cls.Fq.zero())
+
+    def is_zero(self):
+        return self.x.is_zero() and self.z.is_zero()
+
+    def copy(self):
+        return self.__class__(x=self.x.copy(), y=self.y.copy(), z=self.z.copy())
+
+    def __add__(self, other):
+        if self.is_zero():
+            return other.copy()
+        elif other.is_zero():
+            return self.copy()
+        else:
+            x1z2 = self.x * other.z
+            x2z1 = self.z * other.x
+            y1z2 = self.y * other.z
+            y2z1 = self.z * other.y
+            if x1z2 == x2z1 and y1z2 == y2z1:
+                xx = self.x.square()
+                zz = self.z.square()
+                w = (self.A * zz) + (xx + xx + xx)
+                y1z1 = self.y * self.z
+                s = y1z1 + y1z1
+                ss = s.square()
+                sss = s * ss
+                r = self.y * s
+                rr = r.square()
+                b = (self.x + r).square() - xx - rr
+                h = w.square() - (b + b)
+                x3 = h * s
+                y3 = (w * (b - h)) - (rr + rr)
+                z3 = sss
+                return self.__class__(x=x3, y=y3, z=z3)
+            else:
+                z1z2 = self.z * other.z
+                u = y2z1 - y1z2
+                uu = u.square()
+                v = x2z1 - x1z2
+                vv = v.square()
+                vvv = v * vv
+                r = vv * x1z2
+                a = (uu * z1z2) - (vvv + r + r)
+                x3 = v * a
+                y3 = (u * (r - a)) - (vvv * y1z2)
+                z3 = vvv * z1z2
+                return self.__class__(x=x3, y=y3, z=z3)
+
+    def double(self):
+        return self + self
+
+    def __eq__(self, other):
+        if self.z.is_zero() and other.z.is_zero():
+            return True
+        elif self.z.is_zero() or other.z.is_zero():
+            return False
+        else:
+            x1 = self.x / self.z
+            x2 = other.x / other.z
+            y1 = self.y / self.z
+            y2 = other.y / other.z
+            return x1 == x2 and y1 == y2
+
+    def mul(self, n):
+        def aux(x, n):
+            if n == 0:
+                return self.__class__.zero()
+            elif n == 1:
+                return x.copy()
+            elif n % 2 == 0:
+                return aux(x.double(), n / 2)
+            else:
+                return x + aux(x, n - 1)
+
+        return aux(self, n.to_int())
+
+    def to_bytes(self):
+        raise Exception("Not implemented")
+
+    def to_compressed_bytes(self):
+        raise Exception("Not implemented")
+
+    @classmethod
+    def __check_parameters(cls):
+        if not cls.CHECKED_PARAMETERS:
+            assert cls.A is not None
+            assert cls.B is not None
+            assert cls.COFACTOR is not None
+            assert cls.GENERATOR_X is not None
+            assert cls.GENERATOR_Y is not None
+            assert cls.GENERATOR_Z is not None
+            cls.CHECKED_PARAMETERS = True
+
+    @classmethod
+    def is_on_curve(cls, x: Fq, y: Fq, z: Fq) -> bool:
+        if x.is_zero() and z.is_zero():
+            return True
+        elif z.is_zero():
+            return False
+        x_ = x / z
+        y_ = y / z
+        y2 = y_ * y_
+        ax = cls.A * x_
+        x2 = x_ * x_
+        x3 = x2 * x_
+        lhs = y2
+        rhs = x3 + ax + cls.B
+        return lhs == rhs
+
+    @classmethod
+    def is_in_prime_subgroup(cls, x: Fq, y: Fq, z: Fq):
+        p = cls(x=x, y=y, z=z)
+        if p.is_zero():
+            return True
+        p_cof = p.mul(cls.Fr(cls.COFACTOR))
+        return not p_cof.is_zero()
+
+    @classmethod
+    def from_affine_coordinates_exn(cls, x: Fq, y: Fq) -> Self:
+        z = cls.Fq.one()
+        cls.__check_parameters()
+        assert isinstance(x, cls.Fq)
+        assert isinstance(y, cls.Fq)
+        if cls.is_on_curve(x=x, y=y, z=z) and cls.is_in_prime_subgroup(x=x, y=y, z=z):
+            return cls(x=x, y=y, z=cls.Fq.one())
+        else:
+            raise ValueError("This is not a valid point on the curve")
+
+    @classmethod
+    def from_affine_coordinates_opt(cls, x: Fq, y: Fq) -> Self:
+        z = cls.Fq.one()
+        cls.__check_parameters()
+        assert isinstance(x, cls.Fq)
+        assert isinstance(y, cls.Fq)
+        # Check it is on curve
+        if cls.is_on_curve(x=x, y=y, z=z) and cls.is_in_prime_subgroup(x=x, y=y, z=z):
+            return cls(x=x, y=y, z=cls.Fq.one())
+        else:
+            return None
+
+    @classmethod
+    def random(cls):
+        z = cls.Fq.one()
+        y = None
+        while y is None:
+            x = cls.Fq.random()
+            x2 = x * x
+            x3 = x2 * x
+            y2 = x3 + cls.A * x + cls.B
+            # FIXME: seed
+            sign = bool(random.getrandbits(1))
+            y = y2.sqrt_opt(sign=sign)
+        return cls(x=x, y=y, z=z).mul(cls.Fr(cls.COFACTOR))
+
+    @classmethod
+    def from_coordinates_opt(cls, x: Fq, y: Fq, z: Fq) -> Optional[Self]:
+        if cls.is_on_curve(x=x, y=y, z=z) and cls.is_in_prime_subgroup(x=x, y=y, z=z):
+            return cls(x=x, y=y, z=y)
+        else:
+            return None
+
+    @classmethod
+    def from_coordinates_exn(cls, x: Fq, y: Fq, z: Fq) -> Optional[Self]:
+        if cls.is_on_curve(x=x, y=y, z=z) and cls.is_in_prime_subgroup(x=x, y=y, z=z):
+            return cls(x=x, y=y, z=z)
+        else:
+            raise ValueError("This is not a valid point on the curve")
+
+    def negate(self):
+        return self.__class__(x=self.x, y=self.y.negate(), z=self.z)
+
+    @classmethod
+    def generator(cls):
+        return cls.from_coordinates_exn(
+            x=cls.GENERATOR_X, y=cls.GENERATOR_Y, z=cls.GENERATOR_Z
+        )

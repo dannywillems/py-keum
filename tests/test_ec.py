@@ -18,6 +18,7 @@ from keum import (
         secp256k1.AffineWeierstrass,
         secp256r1.AffineWeierstrass,
         pallas.AffineWeierstrass,
+        pallas.ProjectiveWeierstrass,
         bn254.AffineWeierstrass,
         grumpkin.AffineWeierstrass,
         tweedledee.AffineWeierstrass,
@@ -29,14 +30,49 @@ def Ec(request):
     return request.param
 
 
-def test_random_is_on_the_curve(Ec):
-    a = Ec.random()
-    assert Ec.is_on_curve(a.x, a.y)
+@pytest.fixture(
+    params=[
+        pallas.ProjectiveWeierstrass,
+    ]
+)
+def ProjectiveEc(request):
+    return request.param
 
 
-def test_generator_is_on_curve(Ec):
-    g = Ec.generator()
-    assert Ec.is_on_curve(g.x, g.y)
+@pytest.fixture(
+    params=[
+        secp256k1.AffineWeierstrass,
+        secp256r1.AffineWeierstrass,
+        pallas.AffineWeierstrass,
+        bn254.AffineWeierstrass,
+        grumpkin.AffineWeierstrass,
+        tweedledee.AffineWeierstrass,
+        tweedledum.AffineWeierstrass,
+        vesta.AffineWeierstrass,
+    ]
+)
+def AffineEc(request):
+    return request.param
+
+
+def test_affine_random_is_on_the_curve(AffineEc):
+    a = AffineEc.random()
+    assert AffineEc.is_on_curve(a.x, a.y)
+
+
+def test_affine_generator_is_on_curve(AffineEc):
+    g = AffineEc.generator()
+    assert AffineEc.is_on_curve(g.x, g.y)
+
+
+def test_projective_random_is_on_the_curve(ProjectiveEc):
+    a = ProjectiveEc.random()
+    assert ProjectiveEc.is_on_curve(x=a.x, y=a.y, z=a.z)
+
+
+def test_projective_generator_is_on_curve(ProjectiveEc):
+    g = ProjectiveEc.generator()
+    assert ProjectiveEc.is_on_curve(x=g.x, y=g.y, z=g.z)
 
 
 def test_zero_is_identity_for_addition(Ec):
@@ -67,11 +103,18 @@ def test_addition_support_same_points(Ec):
     assert p + p == p.double()
 
 
-def test_addition_of_two_points_is_on_the_curve(Ec):
-    p1 = Ec.random()
-    p2 = Ec.random()
+def test_affine_addition_of_two_points_is_on_the_curve(AffineEc):
+    p1 = AffineEc.random()
+    p2 = AffineEc.random()
     p = p1 + p2
-    assert Ec.is_on_curve(x=p.x, y=p.y)
+    assert AffineEc.is_on_curve(x=p.x, y=p.y)
+
+
+def test_projective_addition_of_two_points_is_on_the_curve(ProjectiveEc):
+    p1 = ProjectiveEc.random()
+    p2 = ProjectiveEc.random()
+    p = p1 + p2
+    assert ProjectiveEc.is_on_curve(x=p.x, y=p.y, z=p.z)
 
 
 def test_mul_zero_gives_identity(Ec):
