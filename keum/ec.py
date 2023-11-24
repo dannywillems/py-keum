@@ -7,6 +7,7 @@ import typing
 class EllipticCurve(metaclass=ABCMeta):
     Fr = None
     Fq = None
+    COFACTOR = None
 
     @classmethod
     @abstractmethod
@@ -78,13 +79,12 @@ class EllipticCurve(metaclass=ABCMeta):
 class Weierstrass(EllipticCurve, metaclass=ABCMeta):
     A = None
     B = None
-    COFACTOR = None
-    GENERATOR_X = None
-    GENERATOR_Y = None
 
 
 class AffineWeierstrass(Weierstrass, metaclass=ABCMeta):
     CHECKED_PARAMETERS = False
+    GENERATOR_X = None
+    GENERATOR_Y = None
 
     @classmethod
     def generator(cls):

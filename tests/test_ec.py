@@ -9,7 +9,7 @@ from keum import (
     tweedledee,
     tweedledum,
     bn254,
-    grumpkin
+    grumpkin,
 )
 
 
