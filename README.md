@@ -1,5 +1,9 @@
 # py-keum
 
+
+[![](https://img.shields.io/pypi/v/keum.svg)](https://pypi.org/project/keum/)
+[![](https://img.shields.io/pypi/pyversions/keum.svg)](https://pypi.org/project/keum/)
+
 **This is a work in progress**
 
 Keum is a modular implementation of cryptographic components which can be used
