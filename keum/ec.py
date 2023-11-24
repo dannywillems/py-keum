@@ -1,5 +1,6 @@
 from abc import ABCMeta, abstractmethod
 import random
+
 # From 3.11
 from typing import Self
 
