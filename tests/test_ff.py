@@ -143,3 +143,8 @@ def test_pow_two_is_square(Finite_field_instance):
 def test_pow_three(Finite_field_instance):
     a = Finite_field_instance.random()
     assert a.pow(3) == a * a * a
+
+
+def test_pow_four(Finite_field_instance):
+    a = Finite_field_instance.random()
+    assert a.pow(4) == a.pow(2).pow(2)
