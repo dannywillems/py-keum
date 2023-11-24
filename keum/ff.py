@@ -66,7 +66,7 @@ class FiniteField(ABC):
         pass
 
     def square(self):
-        return self * self
+        return self.__class__(v=(self.v * self.v) % self.ORDER)
 
     @abstractmethod
     def copy(self):
@@ -148,7 +148,7 @@ class PrimeFiniteField(FiniteField):
         if isinstance(other, self.__class__):
             if other.is_zero():
                 raise ValueError("Division by zero")
-            return self.__class__((self.v / other.v) % self.ORDER)
+            return self * other.inverse()
         raise ValueError("Division only possible between element of the same field")
 
     def copy(self):

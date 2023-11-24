@@ -182,6 +182,7 @@ class AffineWeierstrass(Weierstrass, metaclass=ABCMeta):
             return False
         return (self.x == other.x) and (self.y == other.y)
 
+    # https://hyperelliptic.org/EFD/g1p/auto-shortw.html
     def __add__(self, other):
         if self.is_zero() and other.is_zero():
             return self.__class__(x=None, y=None)
@@ -193,14 +194,24 @@ class AffineWeierstrass(Weierstrass, metaclass=ABCMeta):
             return self.__class__.zero()
         elif self.x == other.x and self.y == other.y:
             return self.double()
+        # y2 - y1
         y2_min_y1 = other.y - self.y
+        # x2 - x1
         x2_min_x1 = other.x - self.x
+        # (y2 - y1) / (x2 - x1)
         slope = y2_min_y1 / x2_min_x1
+        # [(y2 - y1) / (x2 - x1)]^2
         square_slope = slope.square()
+        # [(y2 - y1) / (x2 - x1)]^2 - x2 - x1
         x3 = square_slope - self.x - other.x
-        double_x1 = self.x + self.x
+        # 2 * x1
+        double_x1 = self.x.double()
+        # 2 * x1 + x2
         double_x1_plus_x2 = double_x1 + other.x
-        y3 = double_x1_plus_x2 * slope - (square_slope * slope) - self.y
+        # 2 * x1 + x2 * [(y2 - y1) / (x2 - x1)]
+        tmp1 = double_x1_plus_x2 * slope
+        cube_slope = square_slope * slope
+        y3 = tmp1 - cube_slope - self.y
         return self.__class__(x3, y3)
 
     def negate(self):

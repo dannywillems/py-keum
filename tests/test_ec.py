@@ -55,11 +55,11 @@ def test_addition_support_same_points(Ec):
     assert p + p == p.double()
 
 
-# def test_addition_of_two_points_is_on_the_curve(Ec):
-#     p1 = Ec.random()
-#     p2 = Ec.random()
-#     p = p1 + p2
-#     assert Ec.is_on_curve(p.x, p.y)
+def test_addition_of_two_points_is_on_the_curve(Ec):
+    p1 = Ec.random()
+    p2 = Ec.random()
+    p = p1 + p2
+    assert Ec.is_on_curve(x=p.x, y=p.y)
 
 
 def test_mul_zero_gives_identity(Ec):
@@ -77,18 +77,9 @@ def test_mul_by_two_gives_double(Ec):
     assert p.mul(2) == p.double()
 
 
-# def test_add_is_commutative(Ec):
-#     p1 = Ec.random()
-#     p2 = Ec.random()
-#     print(p1.x)
-#     print(p1.y)
-#     print(p2.x)
-#     print(p2.y)
-#     lhs = p1 + p2
-#     rhs = p2 + p1
-#     print(lhs.x)
-#     print(lhs.y)
-#     print(rhs.x)
-#     print(rhs.y)
-
-#     assert lhs == rhs
+def test_add_is_commutative(Ec):
+    p1 = Ec.random()
+    p2 = Ec.random()
+    lhs = p1 + p2
+    rhs = p2 + p1
+    assert lhs == rhs
