@@ -40,9 +40,9 @@ class EllipticCurve(metaclass=ABCMeta):
     def is_zero(self):
         pass
 
-    # @abstractmethod
-    # def double(self):
-    #     pass
+    @abstractmethod
+    def double(self):
+        pass
 
     @abstractmethod
     def negate(self):
