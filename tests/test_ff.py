@@ -36,6 +36,11 @@ def test_cannot_add_when_different_fields():
         a + b
 
 
+def test_negate(Finite_field_instance):
+    a = Finite_field_instance.random()
+    assert a + a.negate() == Finite_field_instance.zero()
+
+
 def test_cannot_multiply_when_different_fields():
     a = F13.random()
     b = F17.random()
@@ -43,7 +48,18 @@ def test_cannot_multiply_when_different_fields():
         a * b
 
 
-# TODO
+def test_sqrt(Finite_field_instance):
+    a = Finite_field_instance.random()
+    a_sqrt = a.sqrt_opt(sign=True)
+    while a_sqrt is None:
+        a = Finite_field_instance.random()
+        a_sqrt = a.sqrt_opt(sign=True)
+    assert a_sqrt * a_sqrt == a
+    # Opposite
+    a_sqrt = a.sqrt_opt(sign=False)
+    assert a_sqrt * a_sqrt == a
+
+
 def test_cannot_divide_by_zero(Finite_field_instance):
     x = Finite_field_instance.random()
     # Check exception raised

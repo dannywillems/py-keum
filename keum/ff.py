@@ -70,6 +70,37 @@ class FiniteField(ABC):
     def copy(self):
         return self.__class__(self.v)
 
+    def legendre_symbol(self):
+        if self.is_zero():
+            return 0
+        tmp = self.pow(self.ORDER / 2)
+        if tmp.is_one():
+            return 1
+        else:
+            return -1
+
+    def is_quadratic_residue(self):
+        if self.is_zero():
+            return True
+        else:
+            return self.legendre_symbol() == 1
+
+    def negate(self):
+        return self.__class__(self.ORDER - self.v)
+
+    def sqrt_opt(self, sign: bool):
+        # TODO: reimplement
+        from sympy.ntheory import sqrt_mod
+
+        s = sqrt_mod(self.v, self.ORDER)
+        if s is None:
+            return s
+        s = self.__class__(s)
+        if sign:
+            return s
+        else:
+            return s.negate()
+
     def pow(self, n):
         if n == 0:
             return self.__class__.one()
