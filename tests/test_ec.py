@@ -49,8 +49,25 @@ def test_negate(Ec):
     a = Ec.random()
     assert (a == a.negate().negate())
 
+def test_addition_of_two_points_is_on_the_curve(Ec):
+    p1 = Ec.random()
+    p2 = Ec.random()
+    p = p1 + p2
+    assert Ec.is_on_curve(p.x, p.y)
+
 
 # def test_add_is_commutative(Ec):
 #     p1 = Ec.random()
 #     p2 = Ec.random()
-#     assert p1 + p2 == p2 + p1
+#     print(p1.x)
+#     print(p1.y)
+#     print(p2.x)
+#     print(p2.y)
+#     lhs = p1 + p2
+#     rhs = p2 + p1
+#     print(lhs.x)
+#     print(lhs.y)
+#     print(rhs.x)
+#     print(rhs.y)
+
+#     assert lhs == rhs

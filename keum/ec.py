@@ -44,9 +44,9 @@ class EllipticCurve(metaclass=ABCMeta):
     # def double(self):
     #     pass
 
-    # @abstractmethod
-    # def negate(self):
-    #     pass
+    @abstractmethod
+    def negate(self):
+        pass
 
     @abstractmethod
     def to_bytes(self):
