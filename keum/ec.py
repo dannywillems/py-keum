@@ -28,13 +28,13 @@ class EllipticCurve(metaclass=ABCMeta):
     # def of_bytes_exn(cls):
     #     pass
 
-    # @classmethod
-    # def zero(cls):
-    #     pass
+    @classmethod
+    def zero(cls):
+        pass
 
-    # @classmethod
-    # def one(cls):
-    #     pass
+    @classmethod
+    def one(cls):
+        pass
 
     @abstractmethod
     def is_zero(self):
@@ -74,14 +74,16 @@ class Weierstrass(EllipticCurve, metaclass=ABCMeta):
     A = None
     B = None
     COFACTOR = None
+    GENERATOR_X = None
+    GENERATOR_Y = None
 
 
 class AffineWeierstrass(Weierstrass, metaclass=ABCMeta):
     CHECKED_PARAMETERS = False
 
     @classmethod
-    def generator(cls, x, y):
-        return cls.from_coordinates_exn(x, y)
+    def generator(cls):
+        return cls.from_coordinates_exn(cls.GENERATOR_X, cls.GENERATOR_Y)
 
     def __init__(self, x, y):
         self.x = x
@@ -95,18 +97,30 @@ class AffineWeierstrass(Weierstrass, metaclass=ABCMeta):
         return cls(x=None, y=None)
 
     @classmethod
+    def one(cls):
+        return cls.generator()
+
+    @classmethod
     def is_on_curve(cls, x, y):
         y2 = y * y
+        ax = cls.A * x
         x2 = x * x
         x3 = x2 * x
-        return y2 == (x3 + cls.A * x + cls.B)
+        lhs = y2
+        rhs = x3 + ax + cls.B
+        print(lhs)
+        print(rhs)
+        return lhs == rhs
 
-    def __check_parameters(self):
-        if not self.CHECKED_PARAMETERS:
-            assert self.A is not None
-            assert self.B is not None
-            assert self.COFACTOR is not None
-            self.CHECKED_PARAMETERS = True
+    @classmethod
+    def __check_parameters(cls):
+        if not cls.CHECKED_PARAMETERS:
+            assert cls.A is not None
+            assert cls.B is not None
+            assert cls.COFACTOR is not None
+            assert cls.GENERATOR_X is not None
+            assert cls.GENERATOR_Y is not None
+            cls.CHECKED_PARAMETERS = True
 
     @classmethod
     def from_coordinates_exn(cls, x, y):
@@ -145,18 +159,16 @@ class AffineWeierstrass(Weierstrass, metaclass=ABCMeta):
             return self.__class__(other.x, other.y)
         elif other.is_zero():
             return self.__class__(self.x, self.y)
+        elif self.x == other.x and self.y == other.y.negate():
+            return self.__class__.zero()
         y2_min_y1 = other.y - self.y
         x2_min_x1 = other.x - self.x
         slope = y2_min_y1 / x2_min_x1
         square_slope = slope * slope
-        x3 = square_slope + self.x.negate() + other.x.negate()
+        x3 = square_slope - self.x - other.x
         double_x1 = self.x + self.x
         double_x1_plus_x2 = double_x1 + other.x
-        y3 = (
-            double_x1_plus_x2 * slope
-            + (square_slope * slope).negate()
-            + self.y.negate()
-        )
+        y3 = double_x1_plus_x2 * slope - (square_slope * slope) - self.y
         return self.__class__(x3, y3)
 
     @classmethod
