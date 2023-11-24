@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 import sympy
 import random
+from typing import Self
 
 
 class FiniteField(ABC):
@@ -87,6 +88,15 @@ class FiniteField(ABC):
     @classmethod
     @abstractmethod
     def random(cls):
+        pass
+
+    @abstractmethod
+    def to_be_bytes(self):
+        pass
+
+    @classmethod
+    @abstractmethod
+    def of_be_bytes_exn(cls):
         pass
 
 
@@ -227,3 +237,20 @@ class PrimeFiniteField(FiniteField):
 
     def to_int(self):
         return self.v
+
+    def to_be_bytes(self) -> str:
+        return hex(self.v)
+
+    @classmethod
+    def of_be_bytes_opt(cls, bs: str) -> Self:
+        v = int(bs, 16)
+        if v >= cls.ORDER:
+            return None
+        return cls(v)
+
+    @classmethod
+    def of_be_bytes_exn(cls, bs: bytes) -> Self:
+        v = int(bs, 16)
+        if v >= cls.ORDER:
+            raise ValueError("The value must be smaller than the order of the field")
+        return cls(v)

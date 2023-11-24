@@ -1,5 +1,6 @@
 import pytest
 from keum import FiniteField, PrimeFiniteField
+from keum import secp256k1
 
 
 class F13(PrimeFiniteField):
@@ -10,7 +11,7 @@ class F17(PrimeFiniteField):
     ORDER = 17
 
 
-@pytest.fixture(params=[F13, F17])
+@pytest.fixture(params=[F13, F17, secp256k1.AffineWeierstrass.Fr])
 def Finite_field_instance(request):
     return request.param
 
@@ -171,3 +172,9 @@ def test_pow_four(Finite_field_instance):
 def test_square(Finite_field_instance):
     a = Finite_field_instance.random()
     assert a.square() == a * a
+
+
+def test_encoding_decoding(Finite_field_instance):
+    r = Finite_field_instance.random()
+    assert Finite_field_instance.of_be_bytes_opt(r.to_be_bytes()) == r
+    assert Finite_field_instance.of_be_bytes_exn(r.to_be_bytes()) == r
