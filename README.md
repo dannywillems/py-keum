@@ -58,6 +58,14 @@ The following curves are currently supported:
 - [secp256r1](./keum/secp256r1.py)
 - [bn254](./keum/bn254.py)
 
+#### Add a new curve
+
+New elliptic curves can be instantiated easily. See the files given above for
+the structure to use. When a new curve is added, it must be exposed in
+[__init__.py](./keum/__init__.py), and added in the test environment in
+[test_ec.py](tests/test_ec.py). The CI will take care of running the tests for
+the newly added curve.
+
 
 ```python
 from keum import pallas
@@ -68,4 +76,26 @@ p2 = pallas.AffineWeierstrass.random()
 
 # add two points
 p1 + p2
+```
+
+
+## How to contribute
+
+Python 3.11 is required. Use pyenv to install it.
+
+Install the dependencies using
+```
+poetry install
+```
+
+Run the tests with
+
+```
+poetry run pytest tests/
+```
+
+Format with
+
+```
+poetry run black keum/*.py tests/*.py
 ```
