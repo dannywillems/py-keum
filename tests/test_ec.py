@@ -1,6 +1,16 @@
 import pytest
 from keum import FiniteField, PrimeFiniteField
-from keum import babyjubjub, secp256k1, secp256r1, pallas, vesta, tweedledee, tweedledum
+from keum import (
+    babyjubjub,
+    secp256k1,
+    secp256r1,
+    pallas,
+    vesta,
+    tweedledee,
+    tweedledum,
+    bn254,
+    grumpkin
+)
 
 
 @pytest.fixture(
@@ -8,6 +18,8 @@ from keum import babyjubjub, secp256k1, secp256r1, pallas, vesta, tweedledee, tw
         secp256k1.AffineWeierstrass,
         secp256r1.AffineWeierstrass,
         pallas.AffineWeierstrass,
+        bn254.AffineWeierstrass,
+        grumpkin.AffineWeierstrass,
         tweedledee.AffineWeierstrass,
         tweedledum.AffineWeierstrass,
         vesta.AffineWeierstrass,

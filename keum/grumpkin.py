@@ -2,13 +2,13 @@ from keum import PrimeFiniteField
 from keum import AffineWeierstrass
 
 
-class Fr(PrimeFiniteField):
+class Fq(PrimeFiniteField):
     ORDER = (
         21888242871839275222246405745257275088548364400416034343698204186575808495617
     )
 
 
-class Fq(PrimeFiniteField):
+class Fr(PrimeFiniteField):
     ORDER = (
         21888242871839275222246405745257275088696311157297823662689037894645226208583
     )
