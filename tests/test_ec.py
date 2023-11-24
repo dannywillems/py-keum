@@ -23,11 +23,11 @@ def test_zero_is_identity_for_addition(Ec):
 def test_equality_handles_zero(Ec):
     a = Ec.random()
     zero = Ec.zero()
-    assert (a != zero)
-    assert (Ec.zero() == Ec.zero())
+    assert a != zero
+    assert Ec.zero() == Ec.zero()
 
 
 def test_add_is_commutative(Ec):
     p1 = Ec.random()
     p2 = Ec.random()
-    assert (p1 + p2 == p2 + p1)
+    assert p1 + p2 == p2 + p1
