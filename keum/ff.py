@@ -15,12 +15,99 @@ class FiniteField(ABC):
         self.v = v % self.ORDER
 
     @classmethod
+    @abstractmethod
+    def zero(cls):
+        pass
+
+    @classmethod
+    @abstractmethod
+    def one(cls):
+        pass
+
+    @abstractmethod
+    def is_zero(self):
+        pass
+
+    @abstractmethod
+    def is_one(self):
+        pass
+
+    @abstractmethod
+    def __repr__(self):
+        pass
+
+    @abstractmethod
+    def __str__(self):
+        pass
+
+    @abstractmethod
+    def __eq__(self, other):
+        pass
+
+    @abstractmethod
+    def __add__(self, other):
+        pass
+
+    @abstractmethod
+    def __mul__(self, other):
+        pass
+
+    @abstractmethod
+    def __sub__(self, other):
+        pass
+
+    @abstractmethod
+    def __truediv__(self, other):
+        pass
+
+    @classmethod
+    @abstractmethod
+    def negate(self):
+        pass
+
+    def square(self):
+        return self.__class__(v=(self.v * self.v) % self.ORDER)
+
+    @abstractmethod
+    def copy(self):
+        pass
+
+    @abstractmethod
+    def negate(self):
+        pass
+
+    @abstractmethod
+    def sqrt_opt(self, sign: bool):
+        pass
+
+    @abstractmethod
+    def pow(self, n):
+        pass
+
+    @abstractmethod
+    def inverse(self):
+        pass
+
+    # Add a seed
+    @classmethod
+    @abstractmethod
+    def random(cls):
+        pass
+
+
+class PrimeFiniteField(FiniteField):
+    PRIME_DECOMPOSITION = None
+
+    @classmethod
     def zero(cls):
         return cls(0)
 
     @classmethod
     def one(cls):
         return cls(1)
+
+    def double(self):
+        return self + self
 
     def is_zero(self):
         return self.v == 0
@@ -61,14 +148,67 @@ class FiniteField(ABC):
         if isinstance(other, self.__class__):
             if other.is_zero():
                 raise ValueError("Division by zero")
-            return self.__class__((self.v / other.v) % self.ORDER)
+            return self * other.inverse()
         raise ValueError("Division only possible between element of the same field")
-
-    def square(self):
-        return self * self
 
     def copy(self):
         return self.__class__(self.v)
+
+    @classmethod
+    def prime_decomposition_multiplicative_subgroup(cls):
+        if cls.PRIME_DECOMPOSITION is None:
+            cls.__check_order()
+            res = sympy.ntheory.factorint(cls.ORDER - 1)
+            cls.PRIME_DECOMPOSITION = res
+        return cls.PRIME_DECOMPOSITION
+
+    def legendre_symbol(self):
+        if self.is_zero():
+            return 0
+        tmp = self.pow(self.ORDER / 2)
+        if tmp.is_one():
+            return 1
+        else:
+            return -1
+
+    def is_quadratic_residue(self):
+        if self.is_zero():
+            return True
+        else:
+            return self.legendre_symbol() == 1
+
+    def negate(self):
+        return self.__class__(self.ORDER - self.v)
+
+    @classmethod
+    def highest_power_of_two(cls):
+        prime_decomposition = cls.prime_decomposition_multiplicative_subgroup()
+        return prime_decomposition[2] if 2 in prime_decomposition else 0
+
+    @classmethod
+    def __check_order(cls):
+        if not cls.ORDER_CHECK_PERFORMED:
+            assert cls.ORDER is not None
+            assert sympy.isprime(cls.ORDER), "%d is not prime" % cls.ORDER
+            cls.ORDER_CHECK_PERFORMED = True
+
+    @classmethod
+    def random(cls):
+        v = random.randint(0, cls.ORDER - 1)
+        return cls(v)
+
+    def sqrt_opt(self, sign: bool):
+        # TODO: reimplement
+        from sympy.ntheory import sqrt_mod
+
+        s = sqrt_mod(self.v, self.ORDER)
+        if s is None:
+            return s
+        s = self.__class__(s)
+        if sign:
+            return s
+        else:
+            return s.negate()
 
     def pow(self, n):
         if n == 0:
@@ -86,42 +226,9 @@ class FiniteField(ABC):
             raise ValueError("Zero has no inverse")
         return self.pow(self.ORDER - 2)
 
-    # Add a seed
-    @classmethod
-    def random(cls):
-        v = random.randint(0, cls.ORDER - 1)
-        return cls(v)
-
-
-class PrimeFiniteField(FiniteField):
-    PRIME_DECOMPOSITION = None
-
-    def __div__(self, other):
-        if isinstance(other, self.__class__):
-            if other.is_zero():
-                raise ValueError("Division by zero")
-            return self.__class__((self.v / other.v) % self.ORDER)
-
-    @classmethod
-    def prime_decomposition_multiplicative_subgroup(cls):
-        if cls.PRIME_DECOMPOSITION is None:
-            cls.__check_order()
-            res = sympy.ntheory.factorint(cls.ORDER - 1)
-            cls.PRIME_DECOMPOSITION = res
-        return cls.PRIME_DECOMPOSITION
-
-    @classmethod
-    def highest_power_of_two(cls):
-        prime_decomposition = cls.prime_decomposition_multiplicative_subgroup()
-        return prime_decomposition[2] if 2 in prime_decomposition else 0
-
-    @classmethod
-    def __check_order(cls):
-        if not cls.ORDER_CHECK_PERFORMED:
-            assert cls.ORDER is not None
-            assert sympy.isprime(cls.ORDER), "%d is not prime" % cls.ORDER
-            cls.ORDER_CHECK_PERFORMED = True
-
     def __init__(self, v):
         self.__check_order()
         self.v = v
+
+    def to_int(self):
+        return self.v
