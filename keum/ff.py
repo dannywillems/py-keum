@@ -239,17 +239,19 @@ class PrimeFiniteField(FiniteField):
         return self.v
 
     def to_be_bytes(self) -> str:
-        return hex(self.v)
+        return hex(self.v)[2:]
 
     @classmethod
     def of_be_bytes_opt(cls, bs: str) -> Self:
+        bs = "0x%s" % bs
         v = int(bs, 16)
         if v >= cls.ORDER:
             return None
         return cls(v)
 
     @classmethod
-    def of_be_bytes_exn(cls, bs: bytes) -> Self:
+    def of_be_bytes_exn(cls, bs: str) -> Self:
+        bs = "0x%s" % bs
         v = int(bs, 16)
         if v >= cls.ORDER:
             raise ValueError("The value must be smaller than the order of the field")
