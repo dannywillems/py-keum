@@ -108,8 +108,6 @@ class AffineWeierstrass(Weierstrass, metaclass=ABCMeta):
         x3 = x2 * x
         lhs = y2
         rhs = x3 + ax + cls.B
-        print(lhs)
-        print(rhs)
         return lhs == rhs
 
     @classmethod
