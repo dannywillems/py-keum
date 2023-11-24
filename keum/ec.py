@@ -230,7 +230,7 @@ class AffineWeierstrass(Weierstrass, metaclass=ABCMeta):
             # FIXME: seed
             sign = bool(random.getrandbits(1))
             y = y2.sqrt_opt(sign=sign)
-        return cls(x, y)
+        return cls(x, y).mul(cls.Fr(cls.COFACTOR))
 
     def to_bytes(self):
         pass
