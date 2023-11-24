@@ -77,9 +77,11 @@ def test_multiplication_commutative(Finite_field_instance):
     assert a * b == b * a
 
 
-# def test_inverse_twice(Finite_field_instance):
-#     a = Finite_field_instance.random()
-#     assert a.inverse().inverse() == a
+def test_inverse_twice(Finite_field_instance):
+    a = Finite_field_instance.random()
+    while a.is_zero():
+        a = Finite_field_instance.random()
+    assert a.inverse().inverse() == a
 
 
 def test_one_is_identity_for_multiplication(Finite_field_instance):
