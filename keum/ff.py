@@ -239,10 +239,19 @@ class PrimeFiniteField(FiniteField):
         return self.v
 
     def to_be_bytes(self) -> str:
-        return hex(self.v)[2:]
+        exp_bs_length = self.bytes_length() * 2
+        bs = hex(self.v)[2:]
+        bs = "0" * (exp_bs_length - len(bs)) + bs
+        return bs
+
+    @classmethod
+    def bytes_length(cls) -> int:
+        return (cls.ORDER.bit_length() + 7) // 8
 
     @classmethod
     def of_be_bytes_opt(cls, bs: str) -> Self:
+        if len(bs) != cls.bytes_length() * 2:
+            return None
         bs = "0x%s" % bs
         v = int(bs, 16)
         if v >= cls.ORDER:
@@ -251,6 +260,9 @@ class PrimeFiniteField(FiniteField):
 
     @classmethod
     def of_be_bytes_exn(cls, bs: str) -> Self:
+        exp_bs_length = cls.bytes_length() * 2
+        if len(bs) != exp_bs_length:
+            raise ValueError("The bytestring should be of length %d" % exp_bs_length)
         bs = "0x%s" % bs
         v = int(bs, 16)
         if v >= cls.ORDER:
