@@ -104,6 +104,8 @@ def test_zero_has_no_inverse(Finite_field_instance):
 
 def test_inverse(Finite_field_instance):
     a = Finite_field_instance.random()
+    while a.is_zero():
+        a = Finite_field_instance.random()
     assert a.inverse() * a == Finite_field_instance.one()
 
 
@@ -121,3 +123,23 @@ def test_is_zero(Finite_field_instance):
 def test_is_one(Finite_field_instance):
     two = Finite_field_instance(2)
     assert not two.is_one()
+
+
+def test_pow_zero_random_value_is_zero(Finite_field_instance):
+    a = Finite_field_instance.random()
+    assert a.pow(0) == Finite_field_instance.one()
+
+
+def test_pow_one_random_value(Finite_field_instance):
+    a = Finite_field_instance.random()
+    assert a.pow(1) == a
+
+
+def test_pow_two_is_square(Finite_field_instance):
+    a = Finite_field_instance.random()
+    assert a.pow(2) == a * a
+
+
+def test_pow_three(Finite_field_instance):
+    a = Finite_field_instance.random()
+    assert a.pow(3) == a * a * a

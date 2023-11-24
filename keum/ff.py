@@ -65,28 +65,28 @@ class FiniteField(ABC):
             return self.__class__((self.v / other.v) % self.ORDER)
         raise ValueError("Division only possible between element of the same field")
 
+    def copy(self):
+        return self.__class__(self.v)
+
     # To test
     def pow(self, n):
-        def aux(x, acc, n):
-            if n == 1:
-                return acc * x
-            elif n % 2 == 0:
-                return aux(x, acc * acc, n // 2)
-            else:
-                return aux(x, acc * x, n - 1)
-
         if n == 0:
             return self.__class__.one()
-        elif n == 1:
-            return self.__class__(self.v)
-        else:
-            return aux(self, self, n)
+        n_bits = format(n, "b")[1:]
+        acc = self.copy()
+        for b in n_bits:
+            acc *= acc
+            if b == "1":
+                acc = acc * self
+        return acc
+        # else:
+        #     return aux(self, self.__class__.one(), n)
 
     # To test
     def inverse(self):
         if self.is_zero():
             raise ValueError("Zero has no inverse")
-        return self.pow(self.ORDER - 1)
+        return self.pow(self.ORDER - 2)
 
     # Add a seed
     @classmethod
