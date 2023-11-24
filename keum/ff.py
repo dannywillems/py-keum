@@ -60,7 +60,6 @@ class FiniteField(ABC):
     def __truediv__(self, other):
         pass
 
-    @classmethod
     @abstractmethod
     def negate(self):
         pass
@@ -70,10 +69,6 @@ class FiniteField(ABC):
 
     @abstractmethod
     def copy(self):
-        pass
-
-    @abstractmethod
-    def negate(self):
         pass
 
     @abstractmethod
