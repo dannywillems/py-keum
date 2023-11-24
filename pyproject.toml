@@ -6,7 +6,8 @@ authors = ["Danny Willems <danny@badass.be>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.10"
+# For Self in typing
+python = "^3.11"
 sympy = "*"
 
 [tool.poetry.dev-dependencies]
