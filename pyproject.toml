@@ -5,6 +5,10 @@ description = "Modular elliptic curve library implementation in Python for exper
 authors = ["Danny Willems <danny@badass.be>"]
 readme = "README.md"
 
+[project.urls]
+Homepage = "https://github.com/dannywillems/py-keum"
+Issues = "https://github.com/dannywillems/py-keum/issues"
+
 [tool.poetry.dependencies]
 # For Self in typing
 python = "^3.11"
