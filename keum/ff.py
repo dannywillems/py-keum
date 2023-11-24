@@ -229,3 +229,6 @@ class PrimeFiniteField(FiniteField):
     def __init__(self, v):
         self.__check_order()
         self.v = v
+
+    def to_int(self):
+        return self.v

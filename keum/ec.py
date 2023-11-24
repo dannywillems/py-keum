@@ -171,7 +171,7 @@ class AffineWeierstrass(Weierstrass, metaclass=ABCMeta):
             else:
                 return x + aux(x, n - 1)
 
-        return aux(self, n)
+        return aux(self, n.to_int())
 
     def __eq__(self, other):
         if self.is_zero() and other.is_zero():

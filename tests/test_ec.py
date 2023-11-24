@@ -64,17 +64,17 @@ def test_addition_of_two_points_is_on_the_curve(Ec):
 
 def test_mul_zero_gives_identity(Ec):
     p = Ec.random()
-    assert p.mul(0) == Ec.zero()
+    assert p.mul(Ec.Fr(0)) == Ec.zero()
 
 
 def test_mul_one_gives_same_point(Ec):
     p = Ec.random()
-    assert p.mul(1) == p
+    assert p.mul(Ec.Fr(1)) == p
 
 
 def test_mul_by_two_gives_double(Ec):
     p = Ec.random()
-    assert p.mul(2) == p.double()
+    assert p.mul(Ec.Fr(2)) == p.double()
 
 
 def test_add_is_commutative(Ec):
@@ -82,4 +82,13 @@ def test_add_is_commutative(Ec):
     p2 = Ec.random()
     lhs = p1 + p2
     rhs = p2 + p1
+    assert lhs == rhs
+
+
+def test_distributivity_scalar_multiplication(Ec):
+    a = Ec.Fr.random()
+    p1 = Ec.random()
+    p2 = Ec.random()
+    lhs = (p1 + p2).mul(a)
+    rhs = p1.mul(a) + p2.mul(a)
     assert lhs == rhs
