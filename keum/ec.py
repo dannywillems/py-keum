@@ -9,6 +9,7 @@ class EllipticCurve(metaclass=ABCMeta):
     Fq = None
 
     @classmethod
+    @abstractmethod
     def zero(cls):
         pass
 
@@ -52,6 +53,7 @@ class EllipticCurve(metaclass=ABCMeta):
         pass
 
     @classmethod
+    @abstractmethod
     def random(cls):
         pass
 
