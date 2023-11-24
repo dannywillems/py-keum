@@ -71,8 +71,8 @@ The following curves are currently supported:
 
 New elliptic curves can be instantiated easily. See the files given above for
 the structure to use. When a new curve is added, it must be exposed in
-[__init__.py](./keum/__init__.py), and added in the test environment in
-[test_ec.py](tests/test_ec.py). The CI will take care of running the tests for
+[`__init__.py`](./keum/__init__.py), and added in the test environment in
+[`test_ec.py`](tests/test_ec.py). The CI will take care of running the tests for
 the newly added curve.
 
 
