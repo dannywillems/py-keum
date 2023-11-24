@@ -4,6 +4,12 @@ version = "0.1.0"
 description = "Modular elliptic curve library implementation in Python for experimentations"
 authors = ["Danny Willems <danny@badass.be>"]
 readme = "README.md"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
 
 [project.urls]
 Homepage = "https://github.com/dannywillems/py-keum"
