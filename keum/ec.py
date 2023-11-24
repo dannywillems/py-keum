@@ -1,5 +1,7 @@
 from abc import ABCMeta, abstractmethod
 import random
+# From 3.11
+from typing import Self
 
 
 class EllipticCurve(metaclass=ABCMeta):
@@ -24,29 +26,29 @@ class EllipticCurve(metaclass=ABCMeta):
 
     @classmethod
     @abstractmethod
-    def is_in_prime_subgroup(cls, x, y):
+    def is_in_prime_subgroup(cls, x: Fr, y: Fr) -> bool:
         pass
 
     @classmethod
     @abstractmethod
-    def zero(cls):
+    def zero(cls) -> Self:
         pass
 
     @classmethod
     @abstractmethod
-    def one(cls):
+    def one(cls) -> Self:
         pass
 
     @abstractmethod
-    def is_zero(self):
+    def is_zero(self) -> bool:
         pass
 
     @abstractmethod
-    def double(self):
+    def double(self) -> Self:
         pass
 
     @abstractmethod
-    def negate(self):
+    def negate(self) -> Self:
         pass
 
     @abstractmethod
@@ -55,15 +57,15 @@ class EllipticCurve(metaclass=ABCMeta):
 
     @classmethod
     @abstractmethod
-    def random(cls):
+    def random(cls) -> Self:
         pass
 
     @abstractmethod
-    def __eq__(self, other):
+    def __eq__(self: Self, other: Self) -> bool:
         pass
 
     @abstractmethod
-    def __add__(self, other):
+    def __add__(self: Self, other: Self) -> Self:
         pass
 
     # @abstractmethod
