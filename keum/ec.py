@@ -26,7 +26,7 @@ class EllipticCurve(metaclass=ABCMeta):
 
     @classmethod
     @abstractmethod
-    def is_in_prime_subgroup(cls, x: Fr, y: Fr) -> bool:
+    def is_in_prime_subgroup(cls, x: Fq, y: Fq) -> bool:
         pass
 
     @classmethod
@@ -82,6 +82,9 @@ class AffineWeierstrass(Weierstrass, metaclass=ABCMeta):
     CHECKED_PARAMETERS = False
     GENERATOR_X = None
     GENERATOR_Y = None
+    # Redefining for typing
+    Fq = None
+    Fr = None
 
     @classmethod
     def generator(cls):
@@ -91,19 +94,19 @@ class AffineWeierstrass(Weierstrass, metaclass=ABCMeta):
         self.x = x
         self.y = y
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         return self.x is None and self.y is None
 
     @classmethod
-    def zero(cls):
+    def zero(cls) -> Self:
         return cls(x=None, y=None)
 
     @classmethod
-    def one(cls):
+    def one(cls) -> Self:
         return cls.generator()
 
     @classmethod
-    def is_on_curve(cls, x, y):
+    def is_on_curve(cls, x: Fq, y: Fq) -> bool:
         y2 = y * y
         ax = cls.A * x
         x2 = x * x
@@ -123,7 +126,7 @@ class AffineWeierstrass(Weierstrass, metaclass=ABCMeta):
             cls.CHECKED_PARAMETERS = True
 
     @classmethod
-    def from_coordinates_exn(cls, x, y):
+    def from_coordinates_exn(cls, x: Fq, y: Fq) -> Self:
         cls.__check_parameters()
         assert isinstance(x, cls.Fq)
         assert isinstance(y, cls.Fq)
@@ -133,7 +136,7 @@ class AffineWeierstrass(Weierstrass, metaclass=ABCMeta):
             raise ValueError("This is not a valid point on the curve")
 
     @classmethod
-    def from_coordinates_opt(cls, x, y):
+    def from_coordinates_opt(cls, x: Fq, y: Fq) -> Self:
         cls.__check_parameters()
         assert isinstance(x, cls.Fq)
         assert isinstance(y, cls.Fq)
@@ -143,10 +146,10 @@ class AffineWeierstrass(Weierstrass, metaclass=ABCMeta):
         else:
             return None
 
-    def copy(self):
+    def copy(self) -> Self:
         return self.__class__(self.x.copy(), self.y.copy())
 
-    def double(self):
+    def double(self) -> Self:
         if self.is_zero():
             return self.zero()
         xx = self.x.square()
