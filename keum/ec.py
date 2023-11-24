@@ -171,6 +171,11 @@ class AffineWeierstrass(Weierstrass, metaclass=ABCMeta):
         y3 = double_x1_plus_x2 * slope - (square_slope * slope) - self.y
         return self.__class__(x3, y3)
 
+    def negate(self):
+        if self.is_zero():
+            return self.__class__.zero()
+        return self.__class__(self.x, self.y.negate())
+
     @classmethod
     def random(cls):
         y = None

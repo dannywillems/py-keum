@@ -41,6 +41,15 @@ def test_equality_handles_zero(Ec):
     assert Ec.zero() == Ec.zero()
 
 
+def test_negate_identity(Ec):
+    assert Ec.zero().negate() == Ec.zero()
+
+
+def test_negate(Ec):
+    a = Ec.random()
+    assert (a == a.negate().negate())
+
+
 # def test_add_is_commutative(Ec):
 #     p1 = Ec.random()
 #     p2 = Ec.random()
