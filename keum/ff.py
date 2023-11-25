@@ -76,9 +76,16 @@ class FiniteField(ABC):
     def sqrt_opt(self, sign: bool):
         pass
 
-    @abstractmethod
     def pow(self, n):
-        pass
+        if n == 0:
+            return self.__class__.one()
+        n_bits = format(n, "b")[1:]
+        acc = self.copy()
+        for b in n_bits:
+            acc *= acc
+            if b == "1":
+                acc = acc * self
+        return acc
 
     @abstractmethod
     def inverse(self):
@@ -214,17 +221,6 @@ class PrimeFiniteField(FiniteField):
             return s
         else:
             return s.negate()
-
-    def pow(self, n):
-        if n == 0:
-            return self.__class__.one()
-        n_bits = format(n, "b")[1:]
-        acc = self.copy()
-        for b in n_bits:
-            acc *= acc
-            if b == "1":
-                acc = acc * self
-        return acc
 
     def inverse(self):
         if self.is_zero():
