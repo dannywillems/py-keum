@@ -35,8 +35,9 @@ class Poseidon(Permutation, metaclass=ABCMeta):
         assert self.NB_FULL_ROUND is not None
         assert self.NB_PARTIAL_ROUND is not None
         assert self.ROUND_CONSTANTS is not None
-        assert len(self.state) == self.STATE_SIZE
+        assert len(state) == self.STATE_SIZE
         self.state = state
+        self.offset = 0
 
     def get_state_size(self):
         return self.STATE_SIZE
@@ -48,28 +49,28 @@ class Poseidon(Permutation, metaclass=ABCMeta):
         new_state = [self.Field.zero() for _ in range(self.STATE_SIZE)]
         for i in range(self.STATE_SIZE):
             for j in range(self.STATE_SIZE):
-                new_state[i] += self.state[j] * self.MATRIX[j][i]
+                new_state[i] += self.state[j] * self.MATRIX[i][j]
         self.state = new_state
 
-    def add_round_constants(self, offset):
-        for i in self.STATE_SIZE:
-            self.state[i] += self.ROUND_CONSTANTS[offset + i]
+    def add_round_constants(self):
+        for i in range(self.STATE_SIZE):
+            self.state[i] += self.ROUND_CONSTANTS[self.offset]
+            self.offset += 1
 
     def apply_permutation(self):
         for i in range(self.NB_FULL_ROUND // 2):
-            for j in self.STATE_SIZE:
+            self.add_round_constants()
+            for j in range(self.STATE_SIZE):
                 self.state[j] = self.state[j].pow(self.ALPHA)
             self.apply_linear_layer()
-            self.add_round_constants(offset=i * self.STATE_SIZE)
+
         for i in range(self.NB_PARTIAL_ROUND):
+            self.add_round_constants()
             self.state[0] = self.state[0].pow(self.ALPHA)
             self.apply_linear_layer()
-            self.add_round_constants(offset=(self.NB_FULL_ROUND + i) * self.STATE_SIZE)
+
         for i in range(self.NB_FULL_ROUND // 2):
-            for j in self.STATE_SIZE:
+            self.add_round_constants()
+            for j in range(self.STATE_SIZE):
                 self.state[j] = self.state[j].pow(self.ALPHA)
             self.apply_linear_layer()
-            self.add_round_constants(
-                offset=(self.NB_FULL_ROUND + self.NB_PARTIAL_ROUND + i)
-                * self.STATE_SIZE
-            )
