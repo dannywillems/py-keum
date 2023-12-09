@@ -11,7 +11,11 @@ class F17(PrimeFiniteField):
     ORDER = 17
 
 
-@pytest.fixture(params=[F13, F17, secp256k1.AffineWeierstrass.Fr])
+class F17_2(FiniteField):
+    Fp = F17
+    nsqrt = F17.one().negate()
+
+@pytest.fixture(params=[F13, F17, secp256k1.AffineWeierstrass.Fr, F17_2])
 def Finite_field_instance(request):
     return request.param
 

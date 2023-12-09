@@ -264,3 +264,116 @@ class PrimeFiniteField(FiniteField):
         if v >= cls.ORDER:
             raise ValueError("The value must be smaller than the order of the field")
         return cls(v)
+
+
+class Fp2(FiniteField):
+    Fp = None
+    # A value that does not have a square root
+    nsrqt = None
+
+    # An element is represented as a + b*X
+    def __init__(self, a: Fp, b: Fp):
+        self.a = a
+        self.b = b
+
+    @classmethod
+    def zero(cls):
+        return cls(a=cls.Fp.zero(), b=cls.Fp.zero())
+
+    @classmethod
+    def one(cls):
+        return cls(a=cls.Fp.one(), b=cls.Fp.zero())
+
+    def is_zero(self):
+        return self.a.is_zero() and self.b.is_zero()
+
+    def is_one(self):
+        return self.a.is_one() and self.b.is_zero()
+
+    def __repr__(self):
+        return "Fp2(%s + %sX, nsqrt=%s)" % (self.a, self.b, self.nsqrt)
+
+    def __str__(self):
+        return "Fp2(%s + %sX, nsqrt=%s)" % (self.a, self.b, self.nsqrt)
+
+    def __eq__(self, other):
+        return self.a == other.a and self.b == other.b
+
+    def __add__(self, other):
+        c0 = self.a + other.a
+        c1 = self.b + other.b
+        return self.__class__(a=c0, b=c1)
+
+    def __sub__(self, other):
+        c0 = self.a - other.a
+        c1 = self.b - other.b
+        return self.__class__(a=c0, b=c1)
+
+    def __mul__(self, other):
+        tmp_a = self.a * other.a
+        tmp_b = self.b * other.b
+        a = tmp_a + self.nsrqt * tmp_b
+        b = self.a * other.b + self.b * other.a
+        return self.__class__(a=a, b=b)
+
+    def __truediv__(self, other):
+        a_square = self.a.square()
+        b_square = other.b.square()
+        
+
+    def negate(self):
+        return self.__class__(a=self.a.negate(), b=self.b.negate())
+
+    def copy(self):
+        return self.__class__(a=self.a.copy(), b=self.b.copy())
+
+    @classmethod
+    def random(cls):
+        return cls(a=cls.Fp.random(), b=cls.Fp.random())
+
+    def to_be_bytes(self):
+        a_be = self.a.to_be_bytes()
+        b_be = self.b.to_be_bytes()
+        return "%s%s" % (a_be, b_be)
+
+    @classmethod
+    def of_be_bytes_opt(cls, bs: str) -> Self:
+        if len(bs) != 2 * cls.Fq.bytes_length() * 2:
+            return None
+        a_bs = bs[0:64]
+        b_bs = bs[64:128]
+        a = cls.Fq.of_be_bytes_opt(a_bs)
+        b = cls.Fq.of_be_bytes_opt(b_bs)
+        if a is None or b is None:
+            return None
+        return cls(a=a, b=b)
+
+    @classmethod
+    def of_be_bytes_exn(cls, bs: str) -> Self:
+        if len(bs) != 2 * cls.Fq.bytes_length() * 2:
+            return None
+        a_bs = bs[0:64]
+        b_bs = bs[64:128]
+        a = cls.Fq.of_be_bytes_exn(a_bs)
+        b = cls.Fq.of_be_bytes_exn(b_bs)
+        return cls(a=a, b=b)
+
+
+    # # Algorithm 1, https://eprint.iacr.org/2022/367.pdf
+    # def __mul__(self, other):
+    #     a0 = self.a.v
+    #     b0 = self.b.v
+    #     a1 = other.a.v
+    #     b1 = other.b.v
+    #     bt0 = a0 * b0
+    #     bt1 = a1 * b1
+    #     t0 = a0 + a1
+    #     t1 = b0 + b1
+    #     bt2 = t0 * t1
+    #     bt3 = bt0 + bt1
+    #     bt2 = bt2 - bt3
+    #     bt0 = (bt0 - bt1) % self.Fp.ORDER
+    #     c0 = bt2 % self.Fp.ORDER
+    #     c1 = bt0 % self.Fp.ORDER
+    #     return self.__class__(c0, c1)
+
