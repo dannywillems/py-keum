@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "keum"
-version = "0.1.0"
+version = "0.2.0"
 description = "Modular elliptic curve library implementation in Python for experimentations"
 authors = ["Danny Willems <danny@badass.be>"]
 readme = "README.md"
