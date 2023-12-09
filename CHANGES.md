@@ -1,6 +1,6 @@
 ## Unreleased
 
-- Remove duplicatd defintion of negate in FiniteField
+- Remove duplicated defintion of negate in FiniteField
 - Add encoding/decoding of prime field elements. Support big endian
   representations
 - Add encoding/decoding of weierstrass curves in projective form
